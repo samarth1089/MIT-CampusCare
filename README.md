@@ -140,4 +140,4 @@ npm run build
 
 Designed to make campus grievance management simpler, faster, and more transparent.
 
-**MIT CampusCare — Report. Track. Resolve.**
+
