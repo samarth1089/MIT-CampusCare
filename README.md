@@ -395,4 +395,4 @@ npm run build
 
 ---
 
-*Built for the Smart India Hackathon (SIH) — Maharashtra Institute of Technology*
+
