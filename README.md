@@ -1,6 +1,6 @@
 # MIT CampusCare — Smart Student Grievance Management System
 
-> A professional, AI-assisted college grievance portal built for the Smart India Hackathon (SIH). Students submit complaints, an intelligent classification engine routes them to the correct department, SLA timers enforce accountability, and administrators manage everything from a real-time analytics dashboard.
+> A professional, AI-assisted college grievance portal.Students submit complaints, an intelligent classification engine routes them to the correct department, SLA timers enforce accountability, and administrators manage everything from a real-time analytics dashboard.
 
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)
