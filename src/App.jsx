@@ -22,7 +22,7 @@ import AdminProfile from "./pages/AdminProfile";
 import MyComplaints from "./pages/MyComplaints";
 import StudentProfile from "./pages/StudentProfile";
 
-import { login, isAuthenticated, getCurrentUser } from "./services/authService";
+import { login, isAuthenticated, getCurrentUser, registerStudent } from "./services/authService";
 
 function ProtectedRoute({ children, allowedRole }) {
   if (!isAuthenticated()) {
@@ -40,14 +40,35 @@ function ProtectedRoute({ children, allowedRole }) {
 function LandingPage() {
   const navigate = useNavigate();
   const [role, setRole] = useState("student");
+  const [isRegistering, setIsRegistering] = useState(false);
   const [email, setEmail] = useState("samarth@mitcollege.edu");
   const [password, setPassword] = useState("password123");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const [error, setError] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
 
   const handleLogin = (e) => {
     e.preventDefault();
     setError("");
+    setSuccessMsg("");
+    
+    if (isRegistering && role === "student") {
+      if (password !== confirmPassword) {
+        setError("Passwords do not match.");
+        return;
+      }
+      const result = registerStudent(email, password); // Email is used as Name here
+      if (result.success) {
+        setIsRegistering(false);
+        setSuccessMsg("Account created successfully. Please log in.");
+        setPassword("");
+        setConfirmPassword("");
+      } else {
+        setError(result.error || "Registration failed.");
+      }
+      return;
+    }
     
     // Determine which email to use based on the selected role for the demo
     const loginEmail = role === "student" ? "samarth@mitcollege.edu" : "admin@mitcollege.edu";
@@ -161,7 +182,12 @@ function LandingPage() {
                 <div className="flex rounded-lg bg-slate-100 p-1 mb-6">
                   <button
                     type="button"
-                    onClick={() => setRole("student")}
+                    onClick={() => {
+                      setRole("student");
+                      setIsRegistering(false);
+                      setError("");
+                      setSuccessMsg("");
+                    }}
                     className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold rounded-md transition ${
                       role === "student" ? "bg-[#2563EB] text-white shadow-sm" : "text-slate-600 hover:text-slate-900"
                     }`}
@@ -171,7 +197,12 @@ function LandingPage() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setRole("admin")}
+                    onClick={() => {
+                      setRole("admin");
+                      setIsRegistering(false);
+                      setError("");
+                      setSuccessMsg("");
+                    }}
                     className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold rounded-md transition ${
                       role === "admin" ? "bg-[#2563EB] text-white shadow-sm" : "text-slate-600 hover:text-slate-900"
                     }`}
@@ -189,11 +220,11 @@ function LandingPage() {
                     </div>
                     <input
                       id="email-input"
-                      type="email"
+                      type={isRegistering || role === "student" ? "text" : "email"}
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="College Email"
+                      placeholder={isRegistering ? "Full Name" : role === "student" ? "Name or Email" : "College Email"}
                       className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-[#2563EB] text-sm text-slate-900 placeholder-slate-400"
                     />
                   </div>
@@ -215,22 +246,55 @@ function LandingPage() {
                     </div>
                   </div>
 
+                  {isRegistering && role === "student" && (
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <Lock size={18} />
+                      </div>
+                      <input
+                        type="password"
+                        required
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="Confirm Password"
+                        className="w-full pl-10 pr-10 py-3 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-[#2563EB] text-sm text-slate-900 placeholder-slate-400"
+                      />
+                    </div>
+                  )}
+
                   {error && <p className="text-xs text-red-500 font-semibold">{error}</p>}
+                  {successMsg && <p className="text-xs text-emerald-500 font-semibold">{successMsg}</p>}
 
                   <button
                     type="submit"
                     className="w-full bg-[#2563EB] hover:bg-blue-700 text-white py-3.5 rounded-lg text-sm font-bold transition shadow-sm mt-2 flex items-center justify-center gap-2"
                   >
-                    Sign In &rarr;
+                    {isRegistering ? "Create Account" : "Sign In"} &rarr;
                   </button>
                 </form>
 
               </div>
               
               <div className="bg-slate-50 border-t border-slate-100 p-4 text-center">
-                <p className="text-xs text-slate-500 font-medium">
-                  Use your institutional credentials to continue.
-                </p>
+                {role === "student" ? (
+                  <p className="text-xs text-slate-500 font-medium">
+                    {isRegistering ? (
+                      <>
+                        Already have an account?{" "}
+                        <button type="button" onClick={() => { setIsRegistering(false); setError(""); setSuccessMsg(""); }} className="text-blue-600 font-bold hover:underline">Sign In</button>
+                      </>
+                    ) : (
+                      <>
+                        Don't have an account?{" "}
+                        <button type="button" onClick={() => { setIsRegistering(true); setError(""); setSuccessMsg(""); }} className="text-blue-600 font-bold hover:underline">Create Student Account</button>
+                      </>
+                    )}
+                  </p>
+                ) : (
+                  <p className="text-xs text-slate-500 font-medium">
+                    Use your institutional credentials to continue.
+                  </p>
+                )}
               </div>
             </div>
           </div>

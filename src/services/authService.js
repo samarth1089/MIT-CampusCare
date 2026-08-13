@@ -20,8 +20,8 @@ const users = {
   }
 };
 
-export const login = (email, password) => {
-  const user = users[email];
+export const login = (emailOrName, password) => {
+  const user = users[emailOrName];
   if (user && user.password === password) {
     // In a real app, you'd store a token. Here we store the user object.
     const userToStore = { ...user };
@@ -30,6 +30,21 @@ export const login = (email, password) => {
     return { success: true, user: userToStore };
   }
   return { success: false, error: "Invalid credentials" };
+};
+
+export const registerStudent = (name, password) => {
+  if (users[name]) {
+    return { success: false, error: "Student name already exists" };
+  }
+  
+  users[name] = {
+    email: name, // Using name as the key/identifier for students who don't provide email
+    password: password,
+    role: "student",
+    name: name,
+    status: "Active"
+  };
+  return { success: true };
 };
 
 export const logout = () => {

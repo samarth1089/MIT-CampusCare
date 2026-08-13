@@ -294,6 +294,7 @@ export function addComplaint(complaint) {
     updatedAt: new Date().toISOString(),
     slaDeadline: complaint.slaDeadline || "",
     assignedTo: complaint.assignedTo || "",
+    anonymous: complaint.anonymous || false,
     resolution: "",
     attachments: [],
     aiClassification: complaint.aiClassification || null,

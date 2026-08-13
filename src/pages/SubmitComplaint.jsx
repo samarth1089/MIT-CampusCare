@@ -40,6 +40,7 @@ function SubmitComplaint() {
     category: "",
     location: "",
     priority: "",
+    anonymous: false,
   });
 
   const [analysis, setAnalysis] = useState(null);
@@ -60,9 +61,10 @@ function SubmitComplaint() {
   }, [previewUrl]);
 
   const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
     setForm({
       ...form,
-      [e.target.name]: e.target.value,
+      [name]: type === "checkbox" ? checked : value,
     });
   };
 
@@ -129,6 +131,7 @@ function SubmitComplaint() {
       location: form.location,
       slaDeadline: getSlaDeadline(priority, new Date().toISOString()),
       assignedTo: department,
+      anonymous: form.anonymous,
       attachment: attachment ? {
         name: attachment.name,
         type: attachment.type,
@@ -456,6 +459,27 @@ function SubmitComplaint() {
                   </button>
                 </div>
               )}
+            </div>
+
+            {/* ANONYMOUS */}
+            <div className="mb-5 bg-slate-50 border border-slate-200 rounded-lg p-4">
+              <label className="flex items-start gap-3 cursor-pointer">
+                <div className="pt-0.5">
+                  <input
+                    type="checkbox"
+                    name="anonymous"
+                    checked={form.anonymous}
+                    onChange={handleChange}
+                    className="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <span className="text-sm font-bold text-slate-800">Submit this complaint anonymously 🔒</span>
+                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                    Your identity is securely associated with this complaint so you can track it, but it will not be shown to the department handling the complaint.
+                  </p>
+                </div>
+              </label>
             </div>
 
             {/* ANALYZE */}

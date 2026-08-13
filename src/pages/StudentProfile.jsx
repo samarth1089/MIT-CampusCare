@@ -182,34 +182,6 @@ function StudentProfile() {
                   <p className="text-sm font-bold text-slate-800">{currentUser.name}</p>
                 </div>
 
-                <div>
-                  <p className="text-xs font-semibold text-slate-400 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider">
-                    <Mail size={14} /> Email Address
-                  </p>
-                  <p className="text-sm font-bold text-slate-800">{currentUser.email}</p>
-                </div>
-
-                <div>
-                  <p className="text-xs font-semibold text-slate-400 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider">
-                    <ShieldCheck size={14} /> Student ID
-                  </p>
-                  <p className="text-sm font-bold text-slate-800">{currentUser.studentId || "N/A"}</p>
-                </div>
-
-                <div>
-                  <p className="text-xs font-semibold text-slate-400 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider">
-                    <Phone size={14} /> Phone Number
-                  </p>
-                  <p className="text-sm font-bold text-slate-800">{currentUser.phone || "N/A"}</p>
-                </div>
-
-                <div className="sm:col-span-2">
-                  <p className="text-xs font-semibold text-slate-400 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider">
-                    <Building2 size={14} /> Department / Course
-                  </p>
-                  <p className="text-sm font-bold text-slate-800">{currentUser.department || "N/A"}</p>
-                </div>
-
               </div>
             </div>
 
