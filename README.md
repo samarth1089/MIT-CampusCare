@@ -136,8 +136,7 @@ npm run build
 
 ---
 
-## 👥 MIT CampusCare
+## 👥 Team InnoX
 
-Designed to make campus grievance management simpler, faster, and more transparent.
-
+Building a smarter campus grievance system that gives students a simple way to raise concerns, track progress, and stay informed while helping administrators resolve campus issues efficiently.
 
