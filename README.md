@@ -14,44 +14,59 @@ MIT CampusCare provides a centralized platform where students can submit campus 
 * **File Attachments**: Students can attach supporting images or documents while submitting a complaint.
 * **SLA & Escalation Management**: Complaints are assigned priority-based deadlines with overdue tracking and escalation levels.
 * **Admin Management & Analytics**: Administrators can view all complaints, update complaint status, manage priorities and departments, and analyze complaint trends through interactive dashboards.
+* **Persistent Authentication**: Student accounts and authentication data are stored through the Express backend and MongoDB Atlas.
 
 ---
 
 ## 🏗️ System Architecture
 
 ```text
-┌──────────────────────────────────────────┐
-│        STUDENT PORTAL — React            │
-│  • Student Dashboard                     │
-│  • New Complaint                         │
-│  • My Complaints                         │
-│  • Complaint Details                     │
-│  • Student Profile                       │
-└────────────────┬─────────────────────────┘
-                 │
-                 ▼
-┌──────────────────────────────────────────┐
-│        SERVICE LAYER                     │
-│  • Authentication Service                │
-│  • Complaint Service                     │
-│  • Smart Classification                  │
-│  • SLA Management                        │
-│  • Analytics Service                    │
-└────────────────┬─────────────────────────┘
-                 │
-                 ▼
-┌──────────────────────────────────────────┐
-│        ADMIN PORTAL — React              │
-│  • Admin Dashboard                       │
-│  • All Complaints                        │
-│  • Complaint Management                  │
-│  • Analytics Dashboard                   │
-│  • Admin Profile                         │
-└────────────────┬─────────────────────────┘
-                 │
-                 ▼
-          Browser localStorage
+┌──────────────────────────────────────────────┐
+│              REACT FRONTEND                  │
+│                                              │
+│  • Student Login / Registration              │
+│  • Student Dashboard                         │
+│  • Admin Login / Dashboard                   │
+│  • Complaint Management                      │
+└──────────────────────┬───────────────────────┘
+                       │
+                       │ HTTP / REST API
+                       ▼
+┌──────────────────────────────────────────────┐
+│           NODE.JS + EXPRESS BACKEND          │
+│                                              │
+│  • Authentication API                        │
+│  • Student Registration & Login              │
+│  • Role-Based Authentication                 │
+│  • API Routes                                │
+│  • Server-Side Environment Variables         │
+└──────────────────────┬───────────────────────┘
+                       │
+                       │ Mongoose
+                       ▼
+┌──────────────────────────────────────────────┐
+│                 MONGOOSE                     │
+│                                              │
+│  • MongoDB Object Modeling                   │
+│  • Database Queries                          │
+│  • Schema & Data Validation                  │
+└──────────────────────┬───────────────────────┘
+                       │
+                       │ Secure Database Connection
+                       ▼
+┌──────────────────────────────────────────────┐
+│               MONGODB ATLAS                  │
+│                                              │
+│       PERSISTENT DATABASE STORAGE            │
+│                                              │
+│  • Student Accounts                          │
+│  • Authentication Data                       │
+│  • User Roles                                │
+│  • Persistent User Records                   │
+└──────────────────────────────────────────────┘
 ```
+
+The frontend communicates with MongoDB only through the Express backend. Database credentials remain on the server side and are stored using environment variables.
 
 ---
 
@@ -59,17 +74,23 @@ MIT CampusCare provides a centralized platform where students can submit campus 
 
 ```text
 college-grievance/
-├── public/                ← Public assets and favicon
+├── backend/
+│   ├── routes/             ← Backend API routes
+│   ├── models/             ← MongoDB/Mongoose models
+│   ├── server.js           ← Express server & database connection
+│   └── package.json        ← Backend dependencies
+├── public/                 ← Public assets and favicon
 ├── src/
-│   ├── components/        ← Reusable UI components
-│   ├── pages/             ← Student and Admin pages
-│   ├── services/          ← Auth, complaints, SLA and analytics
-│   ├── App.jsx            ← Application routing
-│   └── main.jsx           ← Application entry point
-├── index.html             ← Application HTML entry
-├── package.json           ← Dependencies and scripts
-├── vite.config.js         ← Vite configuration
-└── README.md              ← Project overview and setup
+│   ├── components/         ← Reusable UI components
+│   ├── pages/              ← Student and Admin pages
+│   ├── services/           ← Auth, complaints, SLA and analytics
+│   ├── App.jsx             ← Application routing
+│   └── main.jsx            ← Application entry point
+├── .env                    ← Environment variables (not committed)
+├── index.html              ← Application HTML entry
+├── package.json            ← Frontend dependencies and scripts
+├── vite.config.js          ← Vite configuration
+└── README.md               ← Project overview and setup
 ```
 
 ---
@@ -80,6 +101,8 @@ college-grievance/
 
 * Node.js 18+
 * npm
+* MongoDB Atlas account
+* MongoDB Atlas cluster and database user
 
 ### 1. Clone the Repository
 
@@ -88,25 +111,61 @@ git clone https://github.com/samarth1089/college-grievance.git
 cd college-grievance
 ```
 
-### 2. Install Dependencies
+### 2. Install Frontend Dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Start Development Server
+### 3. Install Backend Dependencies
 
 ```bash
+cd backend
+npm install
+```
+
+### 4. Configure Environment Variables
+
+Create a `.env` file in the project root:
+
+```env
+MONGODB_URI=your_mongodb_atlas_connection_string
+```
+
+Keep `.env` private and never commit it to GitHub.
+
+### 5. Start the Backend
+
+From the `backend` directory:
+
+```bash
+node server.js
+```
+
+The backend runs on:
+
+```text
+http://localhost:5000
+```
+
+### 6. Start the Frontend
+
+Open another terminal and return to the project root:
+
+```bash
+cd ..
 npm run dev
 ```
 
-The application will start on:
+The frontend runs on:
 
 ```text
 http://localhost:5173
 ```
 
-### 4. Production Build
+### 7. Production Build
+
+From the project root:
 
 ```bash
 npm run build
@@ -114,29 +173,39 @@ npm run build
 
 ---
 
-## 🔄 The Complaint Pipeline
+## 🔄 Complaint Pipeline
 
-1. **Student Registration/Login:** Student creates an account and enters the Student Portal.
-2. **Complaint Submission:** Student enters the complaint details and can attach supporting evidence.
-3. **Smart Classification:** The system analyzes the complaint and suggests category, department, priority, location, and SLA.
-4. **Complaint Creation:** A unique `CMP-XXXX` complaint ID is generated and the complaint is stored through the complaint service.
-5. **Tracking:** The complaint becomes available in My Complaints and the Student Dashboard.
-6. **Admin Processing:** Administrators can view and manage the same complaint from the Admin Portal.
-7. **Resolution:** Status changes such as Pending → In Progress → Resolved are reflected across the system.
+1. **Student Registration/Login** — Student creates an account and enters the Student Portal.
+2. **Complaint Submission** — Student enters complaint details and can attach supporting evidence.
+3. **Smart Classification** — The system analyzes the complaint and suggests category, department, priority, location, and SLA.
+4. **Complaint Creation** — A unique `CMP-XXXX` complaint ID is generated.
+5. **Tracking** — Students can monitor complaint status, timeline, priority, department, and SLA information.
+6. **Admin Processing** — Administrators can view and manage complaints through the Admin Portal.
+7. **Resolution** — Complaint status progresses through stages such as Pending → In Progress → Resolved.
 
 ---
 
 ## 🛡️ Privacy & Security
 
-* **Anonymous Reporting:** Sensitive complaints can be submitted without exposing the student's identity to complaint handlers.
-* **Role-Based Access:** Student and Administrator areas are separated through authentication and protected routes.
-* **Centralized Complaint Data:** Student and Admin portals use the same complaint service to maintain consistent complaint status and information.
-* **Session Management:** Login and logout functionality manages the active user session without deleting complaint records.
-* **Client-Side Prototype:** The current version uses browser `localStorage`; a production deployment should use secure backend authentication and database storage.
+* **Anonymous Reporting**: Sensitive complaints can be submitted without exposing the student's identity to complaint handlers.
+* **Role-Based Access**: Student and Administrator areas are separated through authentication and protected routes.
+* **Secure Database Access**: The frontend does not connect directly to MongoDB. Database operations are handled by the Express backend.
+* **Persistent Authentication**: Student account and authentication data are stored in MongoDB Atlas.
+* **Environment-Based Secrets**: MongoDB credentials are stored in environment variables and are not included in source-controlled files.
+* **Session Management**: Login and logout functionality manages the active user session without deleting complaint records.
+
+---
+
+## 📊 Current Data Architecture
+
+Authentication and student account data are persisted through the backend and MongoDB Atlas.
+
+The existing complaint service continues to handle complaint data according to the current application implementation, while MongoDB provides persistent storage for authentication and student account information.
+
+This architecture allows the platform to progressively move additional application data to backend-managed persistent storage as the system evolves.
 
 ---
 
 ## 👥 Team Innox
 
 Building a smarter campus grievance system that gives students a simple way to raise concerns, track progress, and stay informed while helping administrators resolve campus issues efficiently.
-
