@@ -136,7 +136,7 @@ npm run build
 
 ---
 
-## 👥 Team InnoX
+## 👥 Team Innox
 
 Building a smarter campus grievance system that gives students a simple way to raise concerns, track progress, and stay informed while helping administrators resolve campus issues efficiently.
 
