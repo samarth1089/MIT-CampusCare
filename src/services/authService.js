@@ -2,12 +2,10 @@
 const users = {
   "samarth@mitcollege.edu": {
     email: "samarth@mitcollege.edu",
-    password: "password123",
-    role: "student",
-    name: "Samarth Bonde",
-    studentId: "STU-007",
-    department: "Computer Science",
-    phone: "+91 9876543210",
+    password: "1234",
+    role: "admin",
+    name: "System Administrator",
+    department: "Administration",
     status: "Active"
   },
   "admin@mitcollege.edu": {
@@ -20,31 +18,62 @@ const users = {
   }
 };
 
-export const login = (emailOrName, password) => {
-  const user = users[emailOrName];
-  if (user && user.password === password) {
-    // In a real app, you'd store a token. Here we store the user object.
-    const userToStore = { ...user };
-    delete userToStore.password;
-    localStorage.setItem("currentUser", JSON.stringify(userToStore));
-    return { success: true, user: userToStore };
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api/auth";
+
+export const login = async (emailOrName, password) => {
+  // Handle Admin login mock
+  if (users[emailOrName]) {
+    const user = users[emailOrName];
+    if (user && user.password === password) {
+      const userToStore = { ...user };
+      delete userToStore.password;
+      localStorage.setItem("currentUser", JSON.stringify(userToStore));
+      return { success: true, user: userToStore };
+    }
+    return { success: false, error: "Invalid credentials" };
   }
-  return { success: false, error: "Invalid credentials" };
+
+  // Student login via MongoDB backend
+  try {
+    const response = await fetch(`${API_URL}/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name: emailOrName, password })
+    });
+    const data = await response.json();
+    
+    if (data.success) {
+      localStorage.setItem("currentUser", JSON.stringify(data.user));
+      return { success: true, user: data.user };
+    } else {
+      return { success: false, error: data.error || "Invalid credentials" };
+    }
+  } catch (err) {
+    return { success: false, error: "Backend unavailable" };
+  }
 };
 
-export const registerStudent = (name, password) => {
-  if (users[name]) {
-    return { success: false, error: "Student name already exists" };
+export const registerStudent = async (name, password) => {
+  try {
+    const response = await fetch(`${API_URL}/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name, password })
+    });
+    const data = await response.json();
+    
+    if (data.success) {
+      return { success: true };
+    } else {
+      return { success: false, error: data.error || "Student name already exists" };
+    }
+  } catch (err) {
+    return { success: false, error: "Backend unavailable" };
   }
-  
-  users[name] = {
-    email: name, // Using name as the key/identifier for students who don't provide email
-    password: password,
-    role: "student",
-    name: name,
-    status: "Active"
-  };
-  return { success: true };
 };
 
 export const logout = () => {
