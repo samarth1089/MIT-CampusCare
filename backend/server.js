@@ -3,7 +3,7 @@ const dns = require("dns");
 // Fix MongoDB Atlas SRV DNS resolution
 dns.setServers(["8.8.8.8", "1.1.1.1"]);
 
-require("dotenv").config({ path: "../.env" });
+require("dotenv").config({ path: __dirname + "/.env" });
 
 const express = require("express");
 const mongoose = require("mongoose");

@@ -73,23 +73,25 @@ The frontend communicates with MongoDB only through the Express backend. Databas
 ## 📂 Repository Structure
 
 ```text
-college-grievance/
-├── backend/
+MIT-CampusCare/
+├── frontend/               ← React/Vite UI
+│   ├── public/             ← Public assets
+│   ├── src/                ← Source code
+│   │   ├── components/     ← Reusable UI components
+│   │   ├── pages/          ← Student and Admin pages
+│   │   ├── services/       ← API and app services
+│   │   ├── App.jsx         ← Application routing
+│   │   └── main.jsx        ← Application entry point
+│   ├── index.html          ← Application HTML entry
+│   ├── package.json        ← Frontend dependencies
+│   └── vite.config.js      ← Vite configuration
+├── backend/                ← Node.js/Express API
 │   ├── routes/             ← Backend API routes
 │   ├── models/             ← MongoDB/Mongoose models
+│   ├── .env                ← Environment variables (not committed)
+│   ├── .env.example        ← Environment variables template
 │   ├── server.js           ← Express server & database connection
 │   └── package.json        ← Backend dependencies
-├── public/                 ← Public assets and favicon
-├── src/
-│   ├── components/         ← Reusable UI components
-│   ├── pages/              ← Student and Admin pages
-│   ├── services/           ← Auth, complaints, SLA and analytics
-│   ├── App.jsx             ← Application routing
-│   └── main.jsx            ← Application entry point
-├── .env                    ← Environment variables (not committed)
-├── index.html              ← Application HTML entry
-├── package.json            ← Frontend dependencies and scripts
-├── vite.config.js          ← Vite configuration
 └── README.md               ← Project overview and setup
 ```
 
@@ -107,53 +109,15 @@ college-grievance/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/samarth1089/college-grievance.git
-cd college-grievance
+git clone https://github.com/samarth1089/MIT-CampusCare.git
+cd MIT-CampusCare
 ```
 
-### 2. Install Frontend Dependencies
+### 2. Install and Run Frontend
 
 ```bash
+cd frontend
 npm install
-```
-
-### 3. Install Backend Dependencies
-
-```bash
-cd backend
-npm install
-```
-
-### 4. Configure Environment Variables
-
-Create a `.env` file in the project root:
-
-```env
-MONGODB_URI=your_mongodb_atlas_connection_string
-```
-
-Keep `.env` private and never commit it to GitHub.
-
-### 5. Start the Backend
-
-From the `backend` directory:
-
-```bash
-node server.js
-```
-
-The backend runs on:
-
-```text
-http://localhost:5000
-```
-
-### 6. Start the Frontend
-
-Open another terminal and return to the project root:
-
-```bash
-cd ..
 npm run dev
 ```
 
@@ -163,9 +127,36 @@ The frontend runs on:
 http://localhost:5173
 ```
 
-### 7. Production Build
+### 3. Configure Environment Variables
 
-From the project root:
+Create a `.env` file in the `backend` directory based on `.env.example`:
+
+```env
+MONGODB_URI=your_mongodb_atlas_connection_string
+PORT=5000
+```
+
+Keep `.env` private and never commit it to GitHub.
+
+### 4. Install and Run Backend
+
+Open another terminal and go to the `backend` directory:
+
+```bash
+cd backend
+npm install
+npm start
+```
+
+The backend runs on:
+
+```text
+http://localhost:5000
+```
+
+### 5. Production Build (Frontend)
+
+From the `frontend` directory:
 
 ```bash
 npm run build
